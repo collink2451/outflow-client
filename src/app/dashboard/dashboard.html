@@ -50,9 +50,14 @@
               <td>{{ category.category }}</td>
               @for (total of category.monthTotals; track total) {
                 @if (total === 0) {
-                  <td class="text-right text-base-content/50">-</td>
+                  <td class="text-center text-base-content/50">-</td>
                 } @else {
-                  <td class="text-right tabular-nums">${{ total | number: '1.2-2' }}</td>
+                  <td class="text-center tabular-nums">
+                    <span class="flex justify-between">
+                      <span>$</span>
+                      <span>{{ total | number: '1.2-2' }}</span>
+                    </span>
+                  </td>
                 }
               }
             </tr>
