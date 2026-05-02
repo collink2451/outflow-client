@@ -1,11 +1,19 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { Footer } from './footer/footer';
+import { Navbar } from './navbar/navbar';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [],
+  imports: [Navbar, Footer, RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('outflow-client');
+  private auth = inject(AuthService);
+
+  constructor() {
+    this.auth.loadUser();
+  }
 }

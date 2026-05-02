@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { UserResponse } from '../models/user';
 
@@ -6,8 +6,13 @@ import { UserResponse } from '../models/user';
 export class AuthService {
   private http = inject(HttpClient);
 
-  me() {
-    return this.http.get<UserResponse>('/auth/me');
+  user = signal<UserResponse | null>(null);
+
+  loadUser() {
+    this.http.get<UserResponse>('/auth/me').subscribe({
+      next: user => this.user.set(user),
+      error: () => this.user.set(null),
+    });
   }
 
   logout() {
