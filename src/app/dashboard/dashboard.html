@@ -67,7 +67,16 @@
           <tr class="font-bold bg-primary/10 text-primary">
             <td>Total</td>
             @for (total of monthlyTotals(); track total) {
-              <td class="text-right tabular-nums">${{ total | number: '1.2-2' }}</td>
+              @if (total === 0) {
+                <td class="text-center text-base-content/50">-</td>
+              } @else {
+                <td class="text-center tabular-nums">
+                  <span class="flex justify-between">
+                    <span>$</span>
+                    <span>{{ total | number: '1.2-2' }}</span>
+                  </span>
+                </td>
+              }
             }
           </tr>
         </tbody>
