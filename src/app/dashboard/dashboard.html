@@ -35,9 +35,36 @@
   </div>
   <div class="md:col-span-1 xl:col-span-3 grid grid-cols-1 gap-6">
     <div class="card bg-base-200 shadow p-4">
-      <!-- placeholder -->
+      <table class="table table-xs">
+        <thead>
+          <tr>
+            <th></th>
+            @for (month of months(); track month) {
+              <th class="text-center">{{ month }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (category of monthlyCategories(); track category.category) {
+            <tr class="bg-base-200 hover:bg-base-300">
+              <td>{{ category.category }}</td>
+              @for (total of category.monthTotals; track total) {
+                <td class="text-right tabular-nums">${{ total | number: '1.2-2' }}</td>
+              }
+            </tr>
+          }
+        </tbody>
+        <tbody>
+          <tr class="font-bold bg-primary/10 text-primary">
+            <td>Total</td>
+            @for (total of monthlyTotals(); track total) {
+              <td class="text-right tabular-nums">${{ total | number: '1.2-2' }}</td>
+            }
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="card bg-base-200 shadow p-4" style="height: 250px; position: relative">
+    <div class="card bg-base-200 shadow p-4">
       <canvas #pieCanvas style="width: 100%; height: 100%"></canvas>
     </div>
   </div>
