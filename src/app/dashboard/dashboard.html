@@ -45,11 +45,15 @@
           </tr>
         </thead>
         <tbody>
-          @for (category of monthlyCategories(); track category.category) {
-            <tr class="bg-base-200 hover:bg-base-300">
+          @for (category of monthlyCategories(); track category.category; let i = $index) {
+            <tr class="even:bg-base-200 odd:bg-base-300 hover:bg-base-300">
               <td>{{ category.category }}</td>
               @for (total of category.monthTotals; track total) {
-                <td class="text-right tabular-nums">${{ total | number: '1.2-2' }}</td>
+                @if (total === 0) {
+                  <td class="text-right text-base-content/50">-</td>
+                } @else {
+                  <td class="text-right tabular-nums">${{ total | number: '1.2-2' }}</td>
+                }
               }
             </tr>
           }
