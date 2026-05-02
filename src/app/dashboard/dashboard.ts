@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import {
-  AfterViewInit,
   Component,
+  computed,
   effect,
   ElementRef,
   inject,
@@ -58,7 +58,7 @@ interface MonthlyCategory {
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard implements OnInit, AfterViewInit {
+export class Dashboard implements OnInit {
   @ViewChild('pieCanvas') pieCanvas!: ElementRef<HTMLCanvasElement>;
 
   private expenseService = inject(ExpenseService);
@@ -71,9 +71,16 @@ export class Dashboard implements OnInit, AfterViewInit {
   monthlyCategories = signal<MonthlyCategory[]>([]);
   monthlyTotals = signal<number[]>([]);
 
+  filteredCategoryGroups = computed(() =>
+    this.categoryGroups().filter(g => g.total > 0)
+  );
+  filteredMonthlyCategories = computed(() =>
+    this.monthlyCategories().filter(c => c.monthTotals.some(t => t !== 0))
+  );
+
   constructor() {
     effect(() => {
-      const groups = this.categoryGroups();
+      const groups = this.filteredCategoryGroups();
       if (groups.length && this.pieCanvas) this.renderChart(groups);
     });
   }
@@ -85,12 +92,7 @@ export class Dashboard implements OnInit, AfterViewInit {
     });
   }
 
-  ngAfterViewInit(): void {
-    const groups = this.categoryGroups();
-    if (groups.length) this.renderChart(groups);
-  }
-
-  private formatRollingMonth(expenses: ExpenseResponse[]): void {
+private formatRollingMonth(expenses: ExpenseResponse[]): void {
     // Only consider expenses from the last month
     const rollingMonth = new Date();
     rollingMonth.setMonth(rollingMonth.getMonth() - 1);

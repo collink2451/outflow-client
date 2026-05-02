@@ -9,7 +9,7 @@
             <th class="text-right">Total</th>
           </tr>
         </thead>
-        @for (group of categoryGroups(); track group.category) {
+        @for (group of filteredCategoryGroups(); track group.category) {
           <tbody class="border-b border-base-300">
             @for (desc of group.descriptions; track desc.description; let j = $index) {
               <tr class="bg-base-200 hover:bg-base-300">
@@ -45,7 +45,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (category of monthlyCategories(); track category.category; let i = $index) {
+          @for (category of filteredMonthlyCategories(); track category.category) {
             <tr class="even:bg-base-200 odd:bg-base-300 hover:bg-base-300">
               <td>{{ category.category }}</td>
               @for (total of category.monthTotals; track $index) {
