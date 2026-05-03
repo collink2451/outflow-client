@@ -3,6 +3,7 @@ import { Dashboard } from './dashboard/dashboard';
 import { Expenses } from './expenses/expenses';
 import { authGuard } from './guards/auth.guard';
 import { Landing } from './landing/landing';
+import { RecurringExpenses } from './recurring-expenses/recurring-expenses';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,11 @@ export const routes: Routes = [
   {
     path: 'expenses',
     component: Expenses,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'recurring-expenses',
+    component: RecurringExpenses,
     canActivate: [authGuard],
   },
   {

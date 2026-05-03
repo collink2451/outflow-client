@@ -100,6 +100,15 @@
   </li>
   <li>
     <a
+      routerLink="/recurring-expenses"
+      routerLinkActive="font-semibold text-primary"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="mobile && menuOpen.set(false)"
+      >Recurring Expenses</a
+    >
+  </li>
+  <li>
+    <a
       routerLink="/pay-periods"
       routerLinkActive="font-semibold text-primary"
       [routerLinkActiveOptions]="{ exact: true }"
