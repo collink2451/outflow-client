@@ -1,6 +1,33 @@
 <div class="navbar bg-base-200 border-b border-base-300 px-4">
   <div class="navbar-start">
-    <a href="/dashboard" class="text-xl font-bold text-primary">Outflow</a>
+    <div class="md:hidden relative">
+      <button class="btn btn-ghost btn-circle" (click)="menuOpen.set(!menuOpen())">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-5 h-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+      </button>
+      @if (menuOpen()) {
+        <ul
+          class="absolute left-0 top-full mt-1 menu bg-base-200 rounded-box z-10 w-48 p-2 shadow border border-base-300"
+        >
+          <li><a href="/dashboard" (click)="menuOpen.set(false)">Dashboard</a></li>
+          <li><a href="/expenses" (click)="menuOpen.set(false)">Expenses</a></li>
+          <li><a href="/pay-periods" (click)="menuOpen.set(false)">Pay Periods</a></li>
+        </ul>
+      }
+    </div>
+    <a href="/dashboard" class="text-xl font-bold text-primary ml-1">Outflow</a>
   </div>
 
   <div class="navbar-center hidden md:flex">
@@ -15,7 +42,7 @@
     <label class="swap swap-rotate btn btn-ghost btn-circle">
       <input type="checkbox" [checked]="isDark()" (change)="toggleTheme()" />
       <svg
-        xmlns="http://w3.org"
+        xmlns="http://www.w3.org/2000/svg"
         class="swap-off w-5 h-5 fill-current"
         width="24"
         height="24"

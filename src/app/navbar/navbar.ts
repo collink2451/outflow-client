@@ -10,6 +10,7 @@ import { AuthService } from '../services/auth.service';
 export class Navbar {
   auth = inject(AuthService);
   isDark = signal(document.documentElement.getAttribute('data-theme') !== 'light');
+  menuOpen = signal(false);
 
   toggleTheme() {
     const next = this.isDark() ? 'light' : 'dark';
