@@ -21,20 +21,16 @@
         <ul
           class="absolute left-0 top-full mt-1 menu bg-base-200 rounded-box z-10 w-48 p-2 shadow border border-base-300"
         >
-          <li><a href="/dashboard" (click)="menuOpen.set(false)">Dashboard</a></li>
-          <li><a href="/expenses" (click)="menuOpen.set(false)">Expenses</a></li>
-          <li><a href="/pay-periods" (click)="menuOpen.set(false)">Pay Periods</a></li>
+          <ng-container *ngTemplateOutlet="navLinks; context: { mobile: true }" />
         </ul>
       }
     </div>
-    <a href="/dashboard" class="text-xl font-bold text-primary ml-1">Outflow</a>
+    <a routerLink="/dashboard" class="text-xl font-bold text-primary ml-1">Outflow</a>
   </div>
 
   <div class="navbar-center hidden md:flex">
     <ul class="menu menu-horizontal gap-1">
-      <li><a href="/dashboard">Dashboard</a></li>
-      <li><a href="/expenses">Expenses</a></li>
-      <li><a href="/pay-periods">Pay Periods</a></li>
+      <ng-container *ngTemplateOutlet="navLinks; context: { mobile: false }" />
     </ul>
   </div>
 
@@ -82,3 +78,33 @@
     }
   </div>
 </div>
+
+<ng-template #navLinks let-mobile="mobile">
+  <li>
+    <a
+      routerLink="/dashboard"
+      routerLinkActive="font-semibold text-primary"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="mobile && menuOpen.set(false)"
+      >Dashboard</a
+    >
+  </li>
+  <li>
+    <a
+      routerLink="/expenses"
+      routerLinkActive="font-semibold text-primary"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="mobile && menuOpen.set(false)"
+      >Expenses</a
+    >
+  </li>
+  <li>
+    <a
+      routerLink="/pay-periods"
+      routerLinkActive="font-semibold text-primary"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="mobile && menuOpen.set(false)"
+      >Pay Periods</a
+    >
+  </li>
+</ng-template>
