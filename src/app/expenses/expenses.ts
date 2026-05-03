@@ -40,6 +40,7 @@ export class Expenses implements OnInit {
   expenses = signal<EditableExpense[]>([]);
   categories = signal<ExpenseCategoryResponse[]>([]);
   editableCategories = signal<EditableCategory[]>([]);
+  savingVisible = signal<Set<EditableExpense | EditableCategory>>(new Set());
   loading = signal(true);
   sortColumn = signal<SortColumn>('date');
   sortDirection = signal<'asc' | 'desc'>('desc');
@@ -88,6 +89,21 @@ export class Expenses implements OnInit {
         this.loading.set(false);
         this.toast.show('Failed to load expenses', 'error');
       },
+    });
+  }
+
+  private markSaving(row: EditableExpense): void {
+    setTimeout(() => {
+      if (row.saving) this.savingVisible.update((s) => new Set(s).add(row));
+    }, 300);
+  }
+
+  private clearSaving(row: EditableExpense): void {
+    row.saving = false;
+    this.savingVisible.update((s) => {
+      const next = new Set(s);
+      next.delete(row);
+      return next;
     });
   }
 
@@ -141,7 +157,7 @@ export class Expenses implements OnInit {
       return;
 
     row.saving = true;
-    this.expenses.update((rows) => [...rows]);
+    this.markSaving(row);
 
     const request = {
       expenseCategoryId: row.expenseCategoryId,
@@ -155,11 +171,11 @@ export class Expenses implements OnInit {
       this.expenseService.create(request).subscribe({
         next: (created) => {
           row.expenseId = created.expenseId;
-          row.saving = false;
+          this.clearSaving(row);
           this.expenses.update((rows) => [...rows]);
         },
         error: () => {
-          row.saving = false;
+          this.clearSaving(row);
           this.expenses.update((rows) => [...rows]);
           this.toast.show('Failed to save expense', 'error');
         },
@@ -167,11 +183,11 @@ export class Expenses implements OnInit {
     } else {
       this.expenseService.update(row.expenseId, request).subscribe({
         next: () => {
-          row.saving = false;
+          this.clearSaving(row);
           this.expenses.update((rows) => [...rows]);
         },
         error: () => {
-          row.saving = false;
+          this.clearSaving(row);
           this.expenses.update((rows) => [...rows]);
           this.toast.show('Failed to update expense', 'error');
         },

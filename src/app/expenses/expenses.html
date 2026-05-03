@@ -25,7 +25,7 @@
       @for (row of expenses(); track row) {
         <div
           class="rounded-box border border-base-300 bg-base-100 p-2 flex flex-col gap-1"
-          [class.opacity-50]="row.saving"
+          [class.opacity-50]="savingVisible().has(row)"
         >
           <div class="flex gap-1">
             <input
@@ -44,13 +44,20 @@
                 <option [ngValue]="cat.expenseCategoryId">{{ cat.name }}</option>
               }
             </select>
-            <input
-              type="number"
-              step="0.01"
-              class="input input-xs w-20 text-right tabular-nums"
-              [(ngModel)]="row.amount"
-              (blur)="save(row)"
-            />
+            <div class="join">
+              <div
+                class="join-item input input-xs input-bordered flex items-center join-item border-r-0 pl-1 pr-1"
+              >
+                $
+              </div>
+              <input
+                type="number"
+                step="0.01"
+                class="join-item input input-xs w-16 pl-2 tabular-nums"
+                [(ngModel)]="row.amount"
+                (blur)="save(row)"
+              />
+            </div>
           </div>
           <div class="flex gap-1">
             <input
@@ -103,7 +110,10 @@
             </tr>
           }
           @for (row of sortedExpenses(); track row) {
-            <tr class="even:bg-base-200 odd:bg-base-300" [class.opacity-50]="row.saving">
+            <tr
+              class="even:bg-base-200 odd:bg-base-300"
+              [class.opacity-50]="savingVisible().has(row)"
+            >
               <td>
                 <input
                   type="date"
@@ -133,13 +143,23 @@
                 />
               </td>
               <td>
-                <input
-                  type="number"
-                  step="0.01"
-                  class="input input-md text-sm w-full text-right tabular-nums"
-                  [(ngModel)]="row.amount"
-                  (blur)="save(row)"
-                />
+                <label class="join w-full max-w-40">
+                  <span
+                    class="join-item input input-md input-bordered flex w-10 items-center justify-center border-r-0 bg-base-200 px-0 text-base-content/70"
+                  >
+                    $
+                  </span>
+
+                  <input
+                    type="number"
+                    step="0.01"
+                    inputmode="decimal"
+                    class="join-item input input-md input-bordered w-full min-w-0 pl-3 text-right tabular-nums focus:outline-none"
+                    [(ngModel)]="row.amount"
+                    (blur)="save(row)"
+                    aria-label="Amount"
+                  />
+                </label>
               </td>
               <td>
                 <button class="btn btn-error btn-md" (click)="openDeleteDialog(row)">✕</button>
@@ -162,7 +182,7 @@
     </div>
     <div class="flex flex-col gap-2">
       @for (row of editableCategories(); track row) {
-        <div class="flex gap-2 items-center" [class.opacity-50]="row.saving">
+        <div class="flex gap-2 items-center" [class.opacity-50]="savingVisible().has(row)">
           <input
             type="text"
             class="input input-sm flex-1"
