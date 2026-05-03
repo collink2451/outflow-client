@@ -1,28 +1,32 @@
-import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CreatePayCheckRequest, PayCheckResponse, UpdatePayCheckRequest } from '../models/pay-check';
+import { inject, Injectable } from '@angular/core';
+import {
+  CreatePayCheckRequest,
+  PayCheckResponse,
+  UpdatePayCheckRequest,
+} from '../models/pay-check';
 
 @Injectable({ providedIn: 'root' })
 export class PayCheckService {
   private http = inject(HttpClient);
 
   getAll() {
-    return this.http.get<PayCheckResponse[]>('/api/pay-checks');
+    return this.http.get<PayCheckResponse[]>('/api/paychecks');
   }
 
   getById(id: number) {
-    return this.http.get<PayCheckResponse>(`/api/pay-checks/${id}`);
+    return this.http.get<PayCheckResponse>(`/api/paychecks/${id}`);
   }
 
   create(request: CreatePayCheckRequest) {
-    return this.http.post<PayCheckResponse>('/api/pay-checks', request);
+    return this.http.post<PayCheckResponse>('/api/paychecks', request);
   }
 
   update(id: number, request: UpdatePayCheckRequest) {
-    return this.http.put<PayCheckResponse>(`/api/pay-checks/${id}`, request);
+    return this.http.put<PayCheckResponse>(`/api/paychecks/${id}`, request);
   }
 
   delete(id: number) {
-    return this.http.delete<void>(`/api/pay-checks/${id}`);
+    return this.http.delete<void>(`/api/paychecks/${id}`);
   }
 }
