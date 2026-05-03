@@ -181,11 +181,13 @@ export class Expenses implements OnInit {
     const row = this.selectedItem();
     if (!row) return;
 
+    // If the item has a null ID, it means it's a new unsaved item, so we can just remove it from the list
     if ('expenseId' in row && row.expenseId === null) {
       this.expenses.update((rows) => rows.filter((r) => r !== row));
       this.toast.show('Expense deleted', 'success');
       return;
     }
+
     if ('expenseId' in row) {
       // Expense deletion
       this.expenseService.delete(row.expenseId!).subscribe(() => {
@@ -239,7 +241,6 @@ export class Expenses implements OnInit {
           row.saving = false;
           this.editableCategories.update((rows) => [...rows]);
           this.syncCategories();
-          this.toast.show('Category created', 'success');
         },
         error: () => {
           row.saving = false;
@@ -254,7 +255,6 @@ export class Expenses implements OnInit {
           row.saving = false;
           this.editableCategories.update((rows) => [...rows]);
           this.syncCategories();
-          this.toast.show('Category updated', 'success');
         },
         error: () => {
           row.saving = false;
