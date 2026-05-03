@@ -9,7 +9,6 @@ const THEME_KEY = 'theme';
   selector: 'app-navbar',
   imports: [RouterLink, RouterLinkActive, NgTemplateOutlet],
   templateUrl: './navbar.html',
-  styleUrl: './navbar.scss',
 })
 export class Navbar implements OnInit {
   currentPath = window.location.pathname;

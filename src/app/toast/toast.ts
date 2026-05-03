@@ -5,7 +5,6 @@ import { ToastService } from '../services/toast.service';
   selector: 'app-toast',
   imports: [],
   templateUrl: './toast.html',
-  styles: ``,
 })
 export class Toast {
   protected toastService = inject(ToastService);

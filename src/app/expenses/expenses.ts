@@ -29,7 +29,6 @@ interface EditableCategory {
   selector: 'app-expenses',
   imports: [FormsModule, ConfirmDialog],
   templateUrl: './expenses.html',
-  styleUrl: './expenses.scss',
 })
 export class Expenses implements OnInit {
   @ViewChild('categoriesModal') categoriesModal!: ElementRef<HTMLDialogElement>;
@@ -205,7 +204,7 @@ export class Expenses implements OnInit {
         },
         error: () => this.toast.show('Failed to delete expense', 'error'),
       });
-    // Category deletion
+      // Category deletion
     } else if ('expenseCategoryId' in row && row.expenseCategoryId !== null) {
       this.categoryService.delete(row.expenseCategoryId).subscribe({
         next: () => {

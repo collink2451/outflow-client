@@ -9,7 +9,6 @@ import { Toast } from './toast/toast';
   selector: 'app-root',
   imports: [Navbar, Footer, RouterOutlet, Toast],
   templateUrl: './app.html',
-  styleUrl: './app.scss',
 })
 export class App {
   private auth = inject(AuthService);

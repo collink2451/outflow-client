@@ -6,7 +6,6 @@ import { AuthService } from '../services/auth.service';
   selector: 'app-landing',
   imports: [RouterLink],
   templateUrl: './landing.html',
-  styleUrl: './landing.scss',
 })
 export class Landing {
   auth = inject(AuthService);

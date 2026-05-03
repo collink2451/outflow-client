@@ -57,7 +57,6 @@ interface MonthlyCategory {
   selector: 'app-dashboard',
   imports: [DecimalPipe],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
   graphCanvas = viewChild<ElementRef<HTMLCanvasElement>>('graphCanvas');
