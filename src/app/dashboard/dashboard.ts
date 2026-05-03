@@ -7,7 +7,7 @@ import {
   inject,
   OnInit,
   signal,
-  ViewChild,
+  viewChild,
 } from '@angular/core';
 import {
   BarController,
@@ -60,7 +60,7 @@ interface MonthlyCategory {
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
-  @ViewChild('graphCanvas') graphCanvas!: ElementRef<HTMLCanvasElement>;
+  graphCanvas = viewChild<ElementRef<HTMLCanvasElement>>('graphCanvas');
 
   private expenseService = inject(ExpenseService);
   private toast = inject(ToastService);
@@ -83,18 +83,20 @@ export class Dashboard implements OnInit {
   constructor() {
     effect(() => {
       const groups = this.filteredCategoryGroups();
-      if (groups.length && this.graphCanvas) this.renderChart(groups);
+      const canvas = this.graphCanvas();
+      if (groups.length && canvas) this.renderChart(groups);
     });
   }
 
   ngOnInit(): void {
     this.expenseService.getAll().subscribe({
       next: (expenses: ExpenseResponse[]) => {
-      this.formatRollingMonth(expenses);
-      this.formatMonthly(expenses);
+        this.formatRollingMonth(expenses);
+        this.formatMonthly(expenses);
+        this.loading.set(false);
       },
       error: () => {
-      this.loading.set(false);
+        this.loading.set(false);
         this.toast.show('Failed to load expenses', 'error');
       },
     });
@@ -196,7 +198,7 @@ export class Dashboard implements OnInit {
     groups.sort((a, b) => b.total - a.total).splice(10);
     const total = groups.reduce((sum, g) => sum + g.total, 0);
 
-    this.chart = new Chart(this.graphCanvas.nativeElement, {
+    this.chart = new Chart(this.graphCanvas()!.nativeElement, {
       type: 'bar',
       data: {
         labels: [''],
