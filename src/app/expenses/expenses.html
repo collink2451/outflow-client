@@ -1,0 +1,75 @@
+<h1 class="text-2xl font-bold mb-4">Expenses</h1>
+
+<div class="card bg-base-200 shadow p-4">
+  <div class="flex justify-between items-center mb-3">
+    <span class="text-sm text-base-content/60">{{ expenses().length }} expenses</span>
+    <button class="btn btn-primary btn-sm" (click)="addRow()">+ Add Expense</button>
+  </div>
+
+  @if (loading()) {
+    <div class="flex justify-center py-8">
+      <span class="loading loading-spinner loading-md"></span>
+    </div>
+  } @else {
+    <div class="overflow-x-auto rounded-box border border-base-300">
+      <table class="table table-xs">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th class="text-right">Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of expenses(); track row) {
+            <tr class="even:bg-base-200 odd:bg-base-300" [class.opacity-50]="row.saving">
+              <td>
+                <input
+                  type="date"
+                  class="input input-md w-full"
+                  [(ngModel)]="row.date"
+                  (blur)="save(row)"
+                />
+              </td>
+              <td>
+                <select
+                  class="select select-md w-full"
+                  [(ngModel)]="row.expenseCategoryId"
+                  (change)="save(row)"
+                >
+                  <option [ngValue]="null" disabled>—</option>
+                  @for (cat of categories(); track cat.expenseCategoryId) {
+                    <option [ngValue]="cat.expenseCategoryId">{{ cat.name }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <input
+                  type="text"
+                  class="input input-md w-full"
+                  [(ngModel)]="row.description"
+                  (blur)="save(row)"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="input input-md w-full text-right tabular-nums"
+                  [(ngModel)]="row.amount"
+                  (blur)="save(row)"
+                />
+              </td>
+              <td>
+                <button class="btn btn-error btn-md" (click)="delete(row)">✕</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
