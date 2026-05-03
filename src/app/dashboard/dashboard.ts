@@ -64,6 +64,8 @@ export class Dashboard implements OnInit {
   private expenseService = inject(ExpenseService);
   private chart: Chart | null = null;
 
+  loading = signal(true);
+
   categoryGroups = signal<CategoryGroup[]>([]);
   grandTotal = signal<number>(0);
 
@@ -71,11 +73,9 @@ export class Dashboard implements OnInit {
   monthlyCategories = signal<MonthlyCategory[]>([]);
   monthlyTotals = signal<number[]>([]);
 
-  filteredCategoryGroups = computed(() =>
-    this.categoryGroups().filter(g => g.total > 0)
-  );
+  filteredCategoryGroups = computed(() => this.categoryGroups().filter((g) => g.total > 0));
   filteredMonthlyCategories = computed(() =>
-    this.monthlyCategories().filter(c => c.monthTotals.some(t => t !== 0))
+    this.monthlyCategories().filter((c) => c.monthTotals.some((t) => t !== 0)),
   );
 
   constructor() {
@@ -89,10 +89,12 @@ export class Dashboard implements OnInit {
     this.expenseService.getAll().subscribe((expenses: ExpenseResponse[]) => {
       this.formatRollingMonth(expenses);
       this.formatMonthly(expenses);
+
+      this.loading.set(false);
     });
   }
 
-private formatRollingMonth(expenses: ExpenseResponse[]): void {
+  private formatRollingMonth(expenses: ExpenseResponse[]): void {
     // Only consider expenses from the last month
     const rollingMonth = new Date();
     rollingMonth.setMonth(rollingMonth.getMonth() - 1);
