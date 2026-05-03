@@ -6,6 +6,7 @@ export interface RecurringExpenseResponse {
   categoryName: string;
   description: string;
   startDate: string;
+  nextOccurrenceDate: string;
   amount: number;
   automaticRun: boolean;
 }
