@@ -13,7 +13,11 @@
         </thead>
         @if (!filteredCategoryGroups().length) {
           <tbody>
-            <tr><td colspan="3" class="text-center text-base-content/50 py-6">No expenses in the last 30 days</td></tr>
+            <tr>
+              <td colspan="3" class="text-center text-base-content/50 py-6">
+                No expenses in the last 30 days
+              </td>
+            </tr>
           </tbody>
         }
         @for (group of filteredCategoryGroups(); track group.category) {
@@ -41,7 +45,7 @@
     </div>
   </div>
   <div class="md:col-span-1 xl:col-span-3 grid grid-cols-1 gap-6">
-    <div class="card bg-base-200 shadow p-4">
+    <div class="card bg-base-200 shadow p-4 overflow-x-scroll">
       <table class="table table-xs">
         <thead>
           <tr>
@@ -53,7 +57,14 @@
         </thead>
         <tbody>
           @if (!filteredMonthlyCategories().length) {
-            <tr><td [attr.colspan]="months().length + 1" class="text-center text-base-content/50 py-6">No expense data</td></tr>
+            <tr>
+              <td
+                [attr.colspan]="months().length + 1"
+                class="text-center text-base-content/50 py-6"
+              >
+                No expense data
+              </td>
+            </tr>
           }
           @for (category of filteredMonthlyCategories(); track category.category) {
             <tr class="even:bg-base-200 odd:bg-base-300 hover:bg-base-300">
