@@ -195,14 +195,14 @@ export class Dashboard implements OnInit {
   private renderChart(groups: CategoryGroup[]): void {
     if (this.chart) this.chart.destroy();
 
-    groups.sort((a, b) => b.total - a.total).splice(10);
-    const total = groups.reduce((sum, g) => sum + g.total, 0);
+    const top = groups.sort((a, b) => b.total - a.total).slice(0, 10);
+    const total = top.reduce((sum, g) => sum + g.total, 0);
 
     this.chart = new Chart(this.graphCanvas()!.nativeElement, {
       type: 'bar',
       data: {
         labels: [''],
-        datasets: groups.map((g, i) => ({
+        datasets: top.map((g, i) => ({
           label: g.category + ` (${((g.total / total) * 100).toFixed(0)}%)`,
           data: [(g.total / total) * 100],
           backgroundColor: COLORS[i % COLORS.length],
