@@ -59,7 +59,7 @@ interface MonthlyCategory {
   styleUrl: './dashboard.scss',
 })
 export class Dashboard implements OnInit {
-  @ViewChild('pieCanvas') pieCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('graphCanvas') graphCanvas!: ElementRef<HTMLCanvasElement>;
 
   private expenseService = inject(ExpenseService);
   private chart: Chart | null = null;
@@ -81,7 +81,7 @@ export class Dashboard implements OnInit {
   constructor() {
     effect(() => {
       const groups = this.filteredCategoryGroups();
-      if (groups.length && this.pieCanvas) this.renderChart(groups);
+      if (groups.length && this.graphCanvas) this.renderChart(groups);
     });
   }
 
@@ -190,7 +190,7 @@ export class Dashboard implements OnInit {
     groups.sort((a, b) => b.total - a.total).splice(10);
     const total = groups.reduce((sum, g) => sum + g.total, 0);
 
-    this.chart = new Chart(this.pieCanvas.nativeElement, {
+    this.chart = new Chart(this.graphCanvas.nativeElement, {
       type: 'bar',
       data: {
         labels: [''],
