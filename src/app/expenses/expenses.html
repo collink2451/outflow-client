@@ -2,8 +2,13 @@
 
 <div class="card bg-base-200 shadow p-4">
   <div class="flex justify-between items-center mb-3">
-    <span class="text-sm text-base-content/60">{{ expenses().length }} expenses</span>
-    <button class="btn btn-primary btn-sm" (click)="addRow()">+ Add Expense</button>
+    <button class="btn btn-secondary btn-sm" (click)="openCategoriesModal()">
+      Manage Categories
+    </button>
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-base-content/60">{{ expenses().length }} expenses</span>
+      <button class="btn btn-primary btn-sm" (click)="addRow()">+ Add Expense</button>
+    </div>
   </div>
 
   @if (loading()) {
@@ -73,3 +78,34 @@
     </div>
   }
 </div>
+
+<dialog #categoriesModal class="modal">
+  <div class="modal-box">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-bold">Manage Categories</h3>
+      <form method="dialog">
+        <button class="btn btn-md btn-circle">✕</button>
+      </form>
+    </div>
+    <div class="flex flex-col gap-2">
+      @for (row of editableCategories(); track row) {
+        <div class="flex gap-2 items-center" [class.opacity-50]="row.saving">
+          <input
+            type="text"
+            class="input input-sm flex-1"
+            placeholder="Category name"
+            [(ngModel)]="row.name"
+            (blur)="saveCategory(row)"
+          />
+          <button class="btn btn-ghost btn-sm text-error" (click)="deleteCategory(row)">✕</button>
+        </div>
+      }
+    </div>
+    <button class="btn btn-ghost btn-sm mt-3 w-full" (click)="addCategoryRow()">
+      + Add Category
+    </button>
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>
