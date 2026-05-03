@@ -19,7 +19,9 @@
     <!-- Mobile card layout -->
     <div class="flex flex-col gap-2 md:hidden">
       @if (!expenses().length) {
-        <div class="text-center text-base-content/50 py-6">No expenses yet. Tap + Add Expense to get started.</div>
+        <div class="text-center text-base-content/50 py-6">
+          No expenses yet. Tap + Add Expense to get started.
+        </div>
       }
       @for (row of expenses(); track row) {
         <div
@@ -77,18 +79,32 @@
         </colgroup>
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Category</th>
-            <th>Description</th>
-            <th class="text-right">Amount</th>
+            <th class="cursor-pointer select-none" (click)="setSort('date')">
+              Date {{ sortColumn() === 'date' ? (sortDirection() === 'asc' ? '▲' : '▼') : '' }}
+            </th>
+            <th class="cursor-pointer select-none" (click)="setSort('categoryName')">
+              Category
+              {{ sortColumn() === 'categoryName' ? (sortDirection() === 'asc' ? '▲' : '▼') : '' }}
+            </th>
+            <th class="cursor-pointer select-none" (click)="setSort('description')">
+              Description
+              {{ sortColumn() === 'description' ? (sortDirection() === 'asc' ? '▲' : '▼') : '' }}
+            </th>
+            <th class="text-right cursor-pointer select-none" (click)="setSort('amount')">
+              Amount {{ sortColumn() === 'amount' ? (sortDirection() === 'asc' ? '▲' : '▼') : '' }}
+            </th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           @if (!expenses().length) {
-            <tr><td colspan="5" class="text-center text-base-content/50 py-6">No expenses yet. Click + Add Expense to get started.</td></tr>
+            <tr>
+              <td colspan="5" class="text-center text-base-content/50 py-6">
+                No expenses yet. Click + Add Expense to get started.
+              </td>
+            </tr>
           }
-          @for (row of expenses(); track row) {
+          @for (row of sortedExpenses(); track row) {
             <tr class="even:bg-base-200 odd:bg-base-300" [class.opacity-50]="row.saving">
               <td>
                 <input
