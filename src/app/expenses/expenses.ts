@@ -4,6 +4,7 @@ import { ExpenseResponse } from '../models/expense';
 import { ExpenseCategoryResponse } from '../models/expense-category';
 import { ExpenseCategoryService } from '../services/expense-category.service';
 import { ExpenseService } from '../services/expense.service';
+import { ToastService } from '../services/toast.service';
 
 type SortColumn = 'date' | 'categoryName' | 'description' | 'amount';
 
@@ -34,6 +35,7 @@ export class Expenses implements OnInit {
 
   private expenseService = inject(ExpenseService);
   private categoryService = inject(ExpenseCategoryService);
+  private toast = inject(ToastService);
 
   expenses = signal<EditableExpense[]>([]);
   categories = signal<ExpenseCategoryResponse[]>([]);
@@ -42,6 +44,7 @@ export class Expenses implements OnInit {
   sortColumn = signal<SortColumn>('date');
   sortDirection = signal<'asc' | 'desc'>('desc');
 
+  // Compute sorted expenses based on current sort column and direction
   sortedExpenses = computed(() => {
     const col = this.sortColumn();
     const dir = this.sortDirection();
@@ -70,6 +73,7 @@ export class Expenses implements OnInit {
 
     this.expenseService.getAll().subscribe({
       next: (expenses) => {
+        // Sort by date desc by default
         const sorted = [...expenses].sort((a, b) => b.date.localeCompare(a.date));
         this.expenses.set(sorted.map((e) => this.toEditable(e)));
         this.loading.set(false);
@@ -78,6 +82,7 @@ export class Expenses implements OnInit {
     });
   }
 
+  // Convert API response to editable format
   private toEditable(e: ExpenseResponse): EditableExpense {
     return {
       expenseId: e.expenseId,
@@ -136,6 +141,7 @@ export class Expenses implements OnInit {
       amount: row.amount,
     };
 
+    // Check if we're creating a new expense or updating an existing one
     if (row.expenseId === null) {
       this.expenseService.create(request).subscribe({
         next: (created) => {
@@ -165,10 +171,12 @@ export class Expenses implements OnInit {
   delete(row: EditableExpense): void {
     if (row.expenseId === null) {
       this.expenses.update((rows) => rows.filter((r) => r !== row));
+      this.toast.show('Expense deleted', 'success');
       return;
     }
     this.expenseService.delete(row.expenseId).subscribe(() => {
       this.expenses.update((rows) => rows.filter((r) => r !== row));
+      this.toast.show('Expense deleted', 'success');
     });
   }
 
@@ -198,6 +206,7 @@ export class Expenses implements OnInit {
     row.saving = true;
     this.editableCategories.update((rows) => [...rows]);
 
+    // Check if we're creating a new category or updating an existing one
     if (row.expenseCategoryId === null) {
       this.categoryService.create({ name: row.name.trim() }).subscribe({
         next: (created) => {
@@ -206,10 +215,12 @@ export class Expenses implements OnInit {
           row.saving = false;
           this.editableCategories.update((rows) => [...rows]);
           this.syncCategories();
+          this.toast.show('Category created', 'success');
         },
         error: () => {
           row.saving = false;
           this.editableCategories.update((rows) => [...rows]);
+          this.toast.show('Failed to create category', 'error');
         },
       });
     } else {
@@ -219,10 +230,12 @@ export class Expenses implements OnInit {
           row.saving = false;
           this.editableCategories.update((rows) => [...rows]);
           this.syncCategories();
+          this.toast.show('Category updated', 'success');
         },
         error: () => {
           row.saving = false;
           this.editableCategories.update((rows) => [...rows]);
+          this.toast.show('Failed to update category', 'error');
         },
       });
     }
@@ -237,6 +250,7 @@ export class Expenses implements OnInit {
       next: () => {
         this.editableCategories.update((rows) => rows.filter((r) => r !== row));
         this.syncCategories();
+        this.toast.show('Category deleted', 'success');
       },
     });
   }
