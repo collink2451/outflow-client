@@ -1,5 +1,6 @@
 import { Component, computed, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ConfirmDialogComponent as ConfirmDialog } from '../confirm-dialog/confirm-dialog';
 import { ExpenseResponse } from '../models/expense';
 import { ExpenseCategoryResponse } from '../models/expense-category';
 import { ExpenseCategoryService } from '../services/expense-category.service';
@@ -26,7 +27,7 @@ interface EditableCategory {
 
 @Component({
   selector: 'app-expenses',
-  imports: [FormsModule],
+  imports: [FormsModule, ConfirmDialog],
   templateUrl: './expenses.html',
   styleUrl: './expenses.scss',
 })
@@ -43,6 +44,9 @@ export class Expenses implements OnInit {
   loading = signal(true);
   sortColumn = signal<SortColumn>('date');
   sortDirection = signal<'asc' | 'desc'>('desc');
+
+  showDeleteDialog = signal(false);
+  selectedItem = signal<EditableExpense | EditableCategory | null>(null);
 
   // Compute sorted expenses based on current sort column and direction
   sortedExpenses = computed(() => {
@@ -168,16 +172,36 @@ export class Expenses implements OnInit {
     }
   }
 
-  delete(row: EditableExpense): void {
-    if (row.expenseId === null) {
+  openDeleteDialog(row: EditableExpense | EditableCategory) {
+    this.selectedItem.set(row);
+    this.showDeleteDialog.set(true);
+  }
+
+  delete(): void {
+    const row = this.selectedItem();
+    if (!row) return;
+
+    if ('expenseId' in row && row.expenseId === null) {
       this.expenses.update((rows) => rows.filter((r) => r !== row));
       this.toast.show('Expense deleted', 'success');
       return;
     }
-    this.expenseService.delete(row.expenseId).subscribe(() => {
-      this.expenses.update((rows) => rows.filter((r) => r !== row));
-      this.toast.show('Expense deleted', 'success');
-    });
+    if ('expenseId' in row) {
+      // Expense deletion
+      this.expenseService.delete(row.expenseId!).subscribe(() => {
+        this.expenses.update((rows) => rows.filter((r) => r !== row));
+        this.toast.show('Expense deleted', 'success');
+      });
+    } else if ('expenseCategoryId' in row && row.expenseCategoryId !== null) {
+      // Category deletion
+      this.categoryService.delete(row.expenseCategoryId).subscribe({
+        next: () => {
+          this.editableCategories.update((rows) => rows.filter((r) => r !== row));
+          this.syncCategories();
+          this.toast.show('Category deleted', 'success');
+        },
+      });
+    }
   }
 
   // --- Categories modal ---
@@ -239,20 +263,6 @@ export class Expenses implements OnInit {
         },
       });
     }
-  }
-
-  deleteCategory(row: EditableCategory): void {
-    if (row.expenseCategoryId === null) {
-      this.editableCategories.update((rows) => rows.filter((r) => r !== row));
-      return;
-    }
-    this.categoryService.delete(row.expenseCategoryId).subscribe({
-      next: () => {
-        this.editableCategories.update((rows) => rows.filter((r) => r !== row));
-        this.syncCategories();
-        this.toast.show('Category deleted', 'success');
-      },
-    });
   }
 
   private syncCategories(): void {

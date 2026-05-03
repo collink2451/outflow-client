@@ -62,7 +62,7 @@
               [(ngModel)]="row.description"
               (blur)="save(row)"
             />
-            <button class="btn btn-error btn-xs" (click)="delete(row)">✕</button>
+            <button class="btn btn-error btn-xs" (click)="openDeleteDialog(row)">✕</button>
           </div>
         </div>
       }
@@ -145,7 +145,7 @@
                 />
               </td>
               <td>
-                <button class="btn btn-error btn-md" (click)="delete(row)">✕</button>
+                <button class="btn btn-error btn-md" (click)="openDeleteDialog(row)">✕</button>
               </td>
             </tr>
           }
@@ -173,7 +173,7 @@
             [(ngModel)]="row.name"
             (blur)="saveCategory(row)"
           />
-          <button class="btn btn-ghost btn-sm text-error" (click)="deleteCategory(row)">✕</button>
+          <button class="btn btn-ghost btn-sm text-error" (click)="openDeleteDialog(row)">✕</button>
         </div>
       }
     </div>
@@ -185,3 +185,13 @@
     <button>close</button>
   </form>
 </dialog>
+
+<app-confirm-dialog
+  [open]="showDeleteDialog()"
+  (openChange)="showDeleteDialog.set($event)"
+  title="Delete item"
+  message="Are you sure you want to delete this item? This action cannot be undone."
+  confirmText="Delete"
+  cancelText="Cancel"
+  (confirmed)="delete()"
+/>
