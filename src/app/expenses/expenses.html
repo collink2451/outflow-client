@@ -18,6 +18,9 @@
   } @else {
     <!-- Mobile card layout -->
     <div class="flex flex-col gap-2 md:hidden">
+      @if (!expenses().length) {
+        <div class="text-center text-base-content/50 py-6">No expenses yet. Tap + Add Expense to get started.</div>
+      }
       @for (row of expenses(); track row) {
         <div
           class="rounded-box border border-base-300 bg-base-100 p-2 flex flex-col gap-1"
@@ -82,6 +85,9 @@
           </tr>
         </thead>
         <tbody>
+          @if (!expenses().length) {
+            <tr><td colspan="5" class="text-center text-base-content/50 py-6">No expenses yet. Click + Add Expense to get started.</td></tr>
+          }
           @for (row of expenses(); track row) {
             <tr class="even:bg-base-200 odd:bg-base-300" [class.opacity-50]="row.saving">
               <td>

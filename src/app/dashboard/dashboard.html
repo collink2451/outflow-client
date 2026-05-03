@@ -11,6 +11,11 @@
             <th class="text-right">Total</th>
           </tr>
         </thead>
+        @if (!filteredCategoryGroups().length) {
+          <tbody>
+            <tr><td colspan="3" class="text-center text-base-content/50 py-6">No expenses in the last 30 days</td></tr>
+          </tbody>
+        }
         @for (group of filteredCategoryGroups(); track group.category) {
           <tbody class="border-b border-base-300">
             @for (desc of group.descriptions; track desc.description; let j = $index) {
@@ -47,6 +52,9 @@
           </tr>
         </thead>
         <tbody>
+          @if (!filteredMonthlyCategories().length) {
+            <tr><td [attr.colspan]="months().length + 1" class="text-center text-base-content/50 py-6">No expense data</td></tr>
+          }
           @for (category of filteredMonthlyCategories(); track category.category) {
             <tr class="even:bg-base-200 odd:bg-base-300 hover:bg-base-300">
               <td>{{ category.category }}</td>
