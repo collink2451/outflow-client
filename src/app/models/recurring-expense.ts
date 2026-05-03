@@ -7,6 +7,7 @@ export interface RecurringExpenseResponse {
   description: string;
   startDate: string;
   amount: number;
+  automaticRun: boolean;
 }
 
 export interface CreateRecurringExpenseRequest {
@@ -15,6 +16,7 @@ export interface CreateRecurringExpenseRequest {
   description: string;
   startDate: string;
   amount: number;
+  automaticRun: boolean;
 }
 
 export interface UpdateRecurringExpenseRequest {
@@ -23,4 +25,5 @@ export interface UpdateRecurringExpenseRequest {
   description: string;
   startDate: string;
   amount: number;
+  automaticRun: boolean;
 }
