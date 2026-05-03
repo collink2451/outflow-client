@@ -73,7 +73,10 @@ export class Expenses implements OnInit {
   });
 
   ngOnInit(): void {
-    this.categoryService.getAll().subscribe((cats) => this.categories.set(cats));
+    this.categoryService.getAll().subscribe({
+      next: (cats) => this.categories.set(cats),
+      error: () => this.toast.show('Failed to load categories', 'error'),
+    });
 
     this.expenseService.getAll().subscribe({
       next: (expenses) => {
@@ -82,7 +85,10 @@ export class Expenses implements OnInit {
         this.expenses.set(sorted.map((e) => this.toEditable(e)));
         this.loading.set(false);
       },
-      error: () => this.loading.set(false),
+      error: () => {
+        this.loading.set(false);
+        this.toast.show('Failed to load expenses', 'error');
+      },
     });
   }
 
@@ -156,6 +162,7 @@ export class Expenses implements OnInit {
         error: () => {
           row.saving = false;
           this.expenses.update((rows) => [...rows]);
+          this.toast.show('Failed to save expense', 'error');
         },
       });
     } else {
@@ -167,6 +174,7 @@ export class Expenses implements OnInit {
         error: () => {
           row.saving = false;
           this.expenses.update((rows) => [...rows]);
+          this.toast.show('Failed to update expense', 'error');
         },
       });
     }
@@ -188,20 +196,24 @@ export class Expenses implements OnInit {
       return;
     }
 
+    // Expense deletion
     if ('expenseId' in row) {
-      // Expense deletion
-      this.expenseService.delete(row.expenseId!).subscribe(() => {
-        this.expenses.update((rows) => rows.filter((r) => r !== row));
-        this.toast.show('Expense deleted', 'success');
+      this.expenseService.delete(row.expenseId!).subscribe({
+        next: () => {
+          this.expenses.update((rows) => rows.filter((r) => r !== row));
+          this.toast.show('Expense deleted', 'success');
+        },
+        error: () => this.toast.show('Failed to delete expense', 'error'),
       });
+    // Category deletion
     } else if ('expenseCategoryId' in row && row.expenseCategoryId !== null) {
-      // Category deletion
       this.categoryService.delete(row.expenseCategoryId).subscribe({
         next: () => {
           this.editableCategories.update((rows) => rows.filter((r) => r !== row));
           this.syncCategories();
           this.toast.show('Category deleted', 'success');
         },
+        error: () => this.toast.show('Failed to delete category', 'error'),
       });
     }
   }

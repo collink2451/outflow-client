@@ -20,6 +20,7 @@ import {
 } from 'chart.js';
 import { ExpenseResponse } from '../models/expense';
 import { ExpenseService } from '../services/expense.service';
+import { ToastService } from '../services/toast.service';
 
 Chart.register(BarElement, BarController, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -62,6 +63,7 @@ export class Dashboard implements OnInit {
   @ViewChild('graphCanvas') graphCanvas!: ElementRef<HTMLCanvasElement>;
 
   private expenseService = inject(ExpenseService);
+  private toast = inject(ToastService);
   private chart: Chart | null = null;
 
   loading = signal(true);
@@ -86,11 +88,15 @@ export class Dashboard implements OnInit {
   }
 
   ngOnInit(): void {
-    this.expenseService.getAll().subscribe((expenses: ExpenseResponse[]) => {
+    this.expenseService.getAll().subscribe({
+      next: (expenses: ExpenseResponse[]) => {
       this.formatRollingMonth(expenses);
       this.formatMonthly(expenses);
-
+      },
+      error: () => {
       this.loading.set(false);
+        this.toast.show('Failed to load expenses', 'error');
+      },
     });
   }
 
