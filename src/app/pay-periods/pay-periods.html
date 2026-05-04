@@ -1,0 +1,350 @@
+<!-- Pay Periods -->
+<div class="card bg-base-200 shadow p-4 max-w-5xl mx-auto">
+  <h1 class="text-2xl font-bold mb-4">Pay Periods</h1>
+
+  @if (loading()) {
+    <div class="flex justify-center py-8">
+      <span class="loading loading-spinner loading-md"></span>
+    </div>
+  } @else {
+    @if (!payPeriods().length) {
+      <div class="text-center text-base-content/50 py-6">
+        No pay periods yet. Add pay checks below to get started.
+      </div>
+    } @else {
+      <div class="flex flex-col gap-2">
+        @for (period of reversedPayPeriods(); track period.payCheck.payCheckId) {
+          <div class="rounded-box border border-base-300 bg-base-100">
+            <div
+              class="flex items-center justify-between p-3 cursor-pointer select-none"
+              (click)="togglePeriod(period.payCheck.payCheckId)"
+            >
+              <div class="flex items-center gap-3">
+                <span class="font-medium">{{ formatDate(period.payCheck.date) }}</span>
+                <span class="text-sm text-base-content/60">{{ period.expenses.length }} expenses</span>
+              </div>
+              <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                  <div class="text-xs text-base-content/60">Income</div>
+                  <div class="text-sm font-medium tabular-nums">${{ period.payCheck.amount.toFixed(2) }}</div>
+                </div>
+                <div class="text-right hidden sm:block">
+                  <div class="text-xs text-base-content/60">Spent</div>
+                  <div class="text-sm font-medium tabular-nums">${{ period.totalExpenses.toFixed(2) }}</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs text-base-content/60">Net</div>
+                  <div
+                    class="text-sm font-medium tabular-nums"
+                    [class.text-success]="period.net >= 0"
+                    [class.text-error]="period.net < 0"
+                  >
+                    {{ period.net >= 0 ? '+' : '' }}${{ period.net.toFixed(2) }}
+                  </div>
+                </div>
+                <span class="text-base-content/40 text-xs">
+                  {{ expandedPeriods().has(period.payCheck.payCheckId) ? '▲' : '▼' }}
+                </span>
+              </div>
+            </div>
+            @if (expandedPeriods().has(period.payCheck.payCheckId)) {
+              <div class="border-t border-base-300 px-3 py-2">
+                @if (!period.expenses.length) {
+                  <div class="text-center text-base-content/50 py-2 text-sm">
+                    No expenses in this pay period.
+                  </div>
+                } @else {
+                  <table class="table table-xs">
+                    <thead>
+                      <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th class="text-right">Amount</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (expense of period.expenses; track expense.expenseId) {
+                        <tr class="even:bg-base-200 odd:bg-base-300">
+                          <td class="text-sm">{{ formatDate(expense.date) }}</td>
+                          <td class="text-sm">{{ expense.categoryName }}</td>
+                          <td class="text-sm">{{ expense.description }}</td>
+                          <td class="text-sm text-right tabular-nums">${{ expense.amount.toFixed(2) }}</td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+<!-- Pay Checks -->
+<div class="card bg-base-200 shadow p-4 max-w-5xl mx-auto mt-4">
+  <div class="flex justify-between items-center mb-3">
+    <h2 class="text-xl font-bold">Pay Checks</h2>
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-base-content/60">{{ payChecks().length }} pay checks</span>
+      <button class="btn btn-primary btn-sm" (click)="addPayCheck()">+ Add Pay Check</button>
+    </div>
+  </div>
+
+  @if (!loading()) {
+    <!-- Mobile -->
+    <div class="flex flex-col gap-2 md:hidden">
+      @if (!payChecks().length) {
+        <div class="text-center text-base-content/50 py-6">
+          No pay checks yet. Tap + Add Pay Check to get started.
+        </div>
+      }
+      @for (row of payChecks(); track row) {
+        <div
+          class="rounded-box border border-base-300 bg-base-100 p-2 flex gap-2 items-center"
+          [class.opacity-50]="savingVisible().has(row)"
+        >
+          <input
+            type="date"
+            class="input input-xs flex-1"
+            [(ngModel)]="row.date"
+            (blur)="savePayCheck(row)"
+          />
+          <input
+            type="number"
+            step="0.01"
+            class="input input-xs w-28 text-right tabular-nums"
+            [(ngModel)]="row.amount"
+            (blur)="savePayCheck(row)"
+          />
+          <button class="btn btn-error btn-xs" (click)="openDeleteDialog(row)">✕</button>
+        </div>
+      }
+    </div>
+    <!-- Desktop -->
+    <div class="hidden md:block overflow-x-auto rounded-box border border-base-300">
+      <table class="table table-xs">
+        <colgroup>
+          <col class="w-56" />
+          <col />
+          <col class="w-12" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!payChecks().length) {
+            <tr>
+              <td colspan="3" class="text-center text-base-content/50 py-6">
+                No pay checks yet. Click + Add Pay Check to get started.
+              </td>
+            </tr>
+          }
+          @for (row of payChecks(); track row) {
+            <tr
+              class="even:bg-base-200 odd:bg-base-300"
+              [class.opacity-50]="savingVisible().has(row)"
+            >
+              <td>
+                <input
+                  type="date"
+                  class="input input-md text-sm w-full"
+                  [(ngModel)]="row.date"
+                  (blur)="savePayCheck(row)"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  step="0.01"
+                  class="input input-md text-sm w-full text-right tabular-nums"
+                  [(ngModel)]="row.amount"
+                  (blur)="savePayCheck(row)"
+                />
+              </td>
+              <td>
+                <button class="btn btn-error btn-md" (click)="openDeleteDialog(row)">✕</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<!-- Pay Schedules -->
+<div class="card bg-base-200 shadow p-4 max-w-5xl mx-auto mt-4">
+  <div class="flex justify-between items-center mb-3">
+    <h2 class="text-xl font-bold">Pay Schedules</h2>
+    <div class="flex items-center gap-2">
+      <span class="text-sm text-base-content/60">{{ paySchedules().length }} pay schedules</span>
+      <button class="btn btn-primary btn-sm" (click)="addPaySchedule()">+ Add Pay Schedule</button>
+    </div>
+  </div>
+
+  @if (!loading()) {
+    <!-- Mobile -->
+    <div class="flex flex-col gap-2 md:hidden">
+      @if (!paySchedules().length) {
+        <div class="text-center text-base-content/50 py-6">
+          No pay schedules yet. Tap + Add Pay Schedule to get started.
+        </div>
+      }
+      @for (row of paySchedules(); track row) {
+        <div
+          class="rounded-box border border-base-300 bg-base-100 p-2 flex flex-col gap-1"
+          [class.opacity-50]="savingVisible().has(row)"
+        >
+          <div class="flex gap-1">
+            <input
+              type="text"
+              class="input input-xs flex-1"
+              placeholder="Description"
+              [(ngModel)]="row.description"
+              (blur)="savePaySchedule(row)"
+            />
+            <input
+              type="number"
+              step="0.01"
+              class="input input-xs w-24 text-right tabular-nums"
+              [(ngModel)]="row.amount"
+              (blur)="savePaySchedule(row)"
+            />
+          </div>
+          <div class="flex gap-1">
+            <select
+              class="select select-xs flex-1"
+              [(ngModel)]="row.frequencyId"
+              (change)="savePaySchedule(row)"
+            >
+              <option [ngValue]="null" disabled>Frequency</option>
+              @for (freq of frequencies(); track freq.frequencyId) {
+                <option [ngValue]="freq.frequencyId">{{ freq.name }}</option>
+              }
+            </select>
+            <input
+              type="date"
+              class="input input-xs flex-1"
+              [(ngModel)]="row.startDate"
+              (blur)="savePaySchedule(row)"
+            />
+          </div>
+          <div class="flex gap-1 items-center">
+            <input
+              type="date"
+              class="input input-xs flex-1"
+              [(ngModel)]="row.endDate"
+              (blur)="savePaySchedule(row)"
+            />
+            <button class="btn btn-error btn-xs" (click)="openDeleteDialog(row)">✕</button>
+          </div>
+        </div>
+      }
+    </div>
+    <!-- Desktop -->
+    <div class="hidden md:block overflow-x-auto rounded-box border border-base-300">
+      <table class="table table-xs">
+        <colgroup>
+          <col />
+          <col class="w-40" />
+          <col class="w-44" />
+          <col class="w-36" />
+          <col class="w-36" />
+          <col class="w-12" />
+        </colgroup>
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Amount</th>
+            <th>Frequency</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (!paySchedules().length) {
+            <tr>
+              <td colspan="6" class="text-center text-base-content/50 py-6">
+                No pay schedules yet. Click + Add Pay Schedule to get started.
+              </td>
+            </tr>
+          }
+          @for (row of paySchedules(); track row) {
+            <tr
+              class="even:bg-base-200 odd:bg-base-300"
+              [class.opacity-50]="savingVisible().has(row)"
+            >
+              <td>
+                <input
+                  type="text"
+                  class="input input-md text-sm w-full"
+                  [(ngModel)]="row.description"
+                  (blur)="savePaySchedule(row)"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  step="0.01"
+                  class="input input-md text-sm w-full text-right tabular-nums"
+                  [(ngModel)]="row.amount"
+                  (blur)="savePaySchedule(row)"
+                />
+              </td>
+              <td>
+                <select
+                  class="select select-md w-full text-sm"
+                  [(ngModel)]="row.frequencyId"
+                  (change)="savePaySchedule(row)"
+                >
+                  <option [ngValue]="null" disabled>Frequency</option>
+                  @for (freq of frequencies(); track freq.frequencyId) {
+                    <option [ngValue]="freq.frequencyId">{{ freq.name }}</option>
+                  }
+                </select>
+              </td>
+              <td>
+                <input
+                  type="date"
+                  class="input input-md text-sm w-full"
+                  [(ngModel)]="row.startDate"
+                  (blur)="savePaySchedule(row)"
+                />
+              </td>
+              <td>
+                <input
+                  type="date"
+                  class="input input-md text-sm w-full"
+                  [(ngModel)]="row.endDate"
+                  (blur)="savePaySchedule(row)"
+                />
+              </td>
+              <td>
+                <button class="btn btn-error btn-md" (click)="openDeleteDialog(row)">✕</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+<app-confirm-dialog
+  [open]="showDeleteDialog()"
+  (openChange)="showDeleteDialog.set($event)"
+  title="Delete item"
+  message="Are you sure you want to delete this item? This action cannot be undone."
+  confirmText="Delete"
+  cancelText="Cancel"
+  (confirmed)="delete()"
+/>
