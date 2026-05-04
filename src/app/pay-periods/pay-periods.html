@@ -21,16 +21,22 @@
             >
               <div class="flex items-center gap-3">
                 <span class="font-medium">{{ formatDate(period.payCheck.date) }}</span>
-                <span class="text-sm text-base-content/60">{{ period.expenses.length }} expenses</span>
+                <span class="text-sm text-base-content/60"
+                  >{{ period.expenses.length }} expenses</span
+                >
               </div>
               <div class="flex items-center gap-4">
                 <div class="text-right hidden sm:block">
                   <div class="text-xs text-base-content/60">Income</div>
-                  <div class="text-sm font-medium tabular-nums">${{ period.payCheck.amount.toFixed(2) }}</div>
+                  <div class="text-sm font-medium tabular-nums">
+                    ${{ period.payCheck.amount.toFixed(2) }}
+                  </div>
                 </div>
                 <div class="text-right hidden sm:block">
                   <div class="text-xs text-base-content/60">Spent</div>
-                  <div class="text-sm font-medium tabular-nums">${{ period.totalExpenses.toFixed(2) }}</div>
+                  <div class="text-sm font-medium tabular-nums">
+                    ${{ period.totalExpenses.toFixed(2) }}
+                  </div>
                 </div>
                 <div class="text-right">
                   <div class="text-xs text-base-content/60">Net</div>
@@ -69,7 +75,9 @@
                           <td class="text-sm">{{ formatDate(expense.date) }}</td>
                           <td class="text-sm">{{ expense.categoryName }}</td>
                           <td class="text-sm">{{ expense.description }}</td>
-                          <td class="text-sm text-right tabular-nums">${{ expense.amount.toFixed(2) }}</td>
+                          <td class="text-sm text-right tabular-nums">
+                            ${{ expense.amount.toFixed(2) }}
+                          </td>
                         </tr>
                       }
                     </tbody>
