@@ -13,7 +13,7 @@ const THEME_KEY = 'theme';
 export class Navbar implements OnInit {
   currentPath = window.location.pathname;
   auth = inject(AuthService);
-  isDark = signal(localStorage.getItem(THEME_KEY) === 'dark');
+  isDark = signal(localStorage.getItem(THEME_KEY) !== 'light');
   menuOpen = signal(false);
 
   ngOnInit() {
