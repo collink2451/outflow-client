@@ -1,6 +1,6 @@
 import { Component, computed, ElementRef, inject, OnInit, signal, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ConfirmDialogComponent as ConfirmDialog } from '../confirm-dialog/confirm-dialog';
+import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
 import { ExpenseResponse } from '../models/expense';
 import { ExpenseCategoryResponse } from '../models/expense-category';
 import { ExpenseCategoryService } from '../services/expense-category.service';

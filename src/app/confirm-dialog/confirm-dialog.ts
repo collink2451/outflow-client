@@ -15,7 +15,7 @@ import {
   standalone: true,
   templateUrl: './confirm-dialog.html',
 })
-export class ConfirmDialogComponent implements OnChanges, AfterViewInit {
+export class ConfirmDialog implements OnChanges, AfterViewInit {
   @Input() open = false;
 
   @Input() title = 'Confirm action';

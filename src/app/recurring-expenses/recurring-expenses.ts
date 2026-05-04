@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ConfirmDialog } from '../confirm-dialog/confirm-dialog';
 import { ExpenseCategoryResponse } from '../models/expense-category';
 import { FrequencyResponse } from '../models/frequency';
 import { RecurringExpenseResponse } from '../models/recurring-expense';
@@ -25,7 +26,7 @@ interface EditableRecurringExpense {
 
 @Component({
   selector: 'app-recurring-expenses',
-  imports: [FormsModule],
+  imports: [FormsModule, ConfirmDialog],
   templateUrl: './recurring-expenses.html',
 })
 export class RecurringExpenses implements OnInit {
