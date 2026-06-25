@@ -117,4 +117,13 @@
       >Pay Periods</a
     >
   </li>
+  <li>
+    <a
+      routerLink="/banks"
+      routerLinkActive="font-semibold text-primary"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="mobile && menuOpen.set(false)"
+      >Banks</a
+    >
+  </li>
 </ng-template>
