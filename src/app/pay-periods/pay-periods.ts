@@ -51,6 +51,7 @@ export class PayPeriods implements OnInit {
   selectedItem = signal<EditablePayCheck | EditablePaySchedule | null>(null);
 
   reversedPayPeriods = computed(() => [...this.payPeriods()].reverse());
+  allTimeNet = computed(() => this.payPeriods().reduce((sum, p) => sum + p.net, 0));
 
   ngOnInit(): void {
     forkJoin({
